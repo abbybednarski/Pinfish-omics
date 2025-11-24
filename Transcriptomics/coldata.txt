@@ -1,0 +1,13 @@
+	Treatment	SamplingTemp	Tower	FrontBack	TopBottom	Position	Weight	PossibleOutlier	CenterWeight
+C.T1.03.M.counts	Control	23	1	Front	Top	Middle	9.04	No	-1.474166667
+C.T1.14.M.counts	Control	23	1	Back	Bottom	Middle	10.46	No	-0.0541667
+C.T1.16.M.counts	Control	23	1	Back	Bottom	Edge	12.12	No	1.6058333
+C.T5.12.M.counts	Control	23	5	Front	Bottom	Edge	9.04	No	-1.4741667
+M.T6.06.M.counts	Multiple	31	6	Back	Top	Middle	10.36	No	-0.1541667
+M.T6.10.M.counts	Multiple	31	6	Front	Bottom	Middle	9.63	No	-0.8841667
+M.T6.12.M.counts	Multiple	31	6	Front	Bottom	Edge	8.23	No	-2.2841667
+S.T1.01.M.counts	Single	31	1	Front	Top	Edge	10.7	No	0.1858333
+S.T1.07.M.counts	Single	31	1	Back	Top	Middle	14.4	No	3.8858333
+S.T1.12.M.counts	Single	31	1	Front	Bottom	Edge	10.7	No	0.1858333
+S.T3.09.M.counts	Single	31	3	Front	Bottom	Edge	12.7	No	2.1858333
+S.T3.14.M.counts	Single	31	3	Back	Bottom	Middle	8.79	No	-1.7241667
