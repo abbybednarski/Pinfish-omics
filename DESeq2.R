@@ -77,6 +77,7 @@ summary(res_control_single_sigs)
 #total: 167
 
 #same as above but now comparing single vs multiple
+  #multiple is reference
 res_single_multiple <- results(dds_noT2, alpha = 0.05, contrast = c("Treatment", "Single", "Multiple"))
 res_single_multiple_sigs <- subset(res_single_multiple, padj < 0.05)
 summary(res_single_multiple_sigs)
@@ -172,121 +173,31 @@ ggplot(pca_df, aes(x = PC1, y = PC2, color = Treatment, shape = Treatment)) +
     x = paste0("PC1 (", round(summary(pca_data)$importance[2, 1] * 100, 1), "% variance)"),
     y = paste0("PC2 (", round(summary(pca_data)$importance[2, 2] * 100, 1), "% variance)")) +
   theme_classic() +
-  scale_color_manual(values = c("red", "blue", "green")) + 
+  scale_color_manual(values = c("grey", "blue", "red")) + 
   theme(legend.background = element_rect(fill = "white", color = "black"))
 
 
+#PCA with ellipses
+library(ggforce)
 
+x_buffer <- (max(pca_df$PC1) - min(pca_df$PC1)) * 0.5
+y_buffer <- (max(pca_df$PC2) - min(pca_df$PC2)) * 0.5
 
-
-
-
-#stopped hereeeeee - nothing else past this but keep in case
-#after this, have a lot to change
-
-# Run WGCNA on your dataset
-coldata$fishID <- rownames(coldata)
-normalized_counts <- assay(vsd) %>%
-  t()
-
-sft <- pickSoftThreshold(normalized_counts, dataIsExpr = T, networkType = "signed")
-sft_df <- data.frame(sft$fitIndices) %>%
-  dplyr::mutate(model_fit = -sign(slope) * SFT.R.sq)
-
-ggplot(sft_df, aes(x = Power, y = model_fit, label = Power)) + 
-  geom_point() + geom_text(nudge_y = 0.1) + 
-  geom_hline(yintercept = 0.80, col = "red") + 
-  ylim(c(min(sft_df$model_fit), 1.05)) + 
-  xlab("Soft Threshold (power)") + 
-  ylab("Scale Free Topology Model Fit, signed R^2") + 
-  ggtitle("Scale Independence") + theme_classic()
-
-bwnet <- blockwiseModules(normalized_counts, maxBlockSize = 5000, 
-                          TOMType = "signed", power = 12, numericLabels = T, 
-                          randomSeed = 1234)
-
-readr::write_rds(bwnet, file = "WGCNA_results.RDS")
-
-module_eigengenes <- bwnet$MEs
-head(module_eigengenes)
-
-all.equal(coldata$fishID, rownames(module_eigengenes))
-
-des_mat <- model.matrix(~ coldata$Treatment)
-fit <- limma::lmFit(t(module_eigengenes), design = des_mat)
-fit <- limma::eBayes(fit)
-stats_df <- limma::topTable(fit, number = ncol(module_eigengenes)) %>%
-  tibble::rownames_to_column("module")
-head(stats_df)
-# Three modules significantly different across groups
-# ME167, ME140, ME285
-
-module_df <- module_eigengenes %>%
-  tibble::rownames_to_column("FishID") %>%
-  dplyr::inner_join(coldata %>%
-                      dplyr::select(fishID, Treatment), by = c("FishID" = "fishID"))
-
-ggplot(module_df, aes(x = Treatment, y = ME285, color = Treatment)) + 
-  geom_boxplot(width = 0.2, outlier.shape = NA) + ggforce::geom_sina(maxwidth = 0.3) + 
-  theme_classic()
-
-gene_module_key <- tibble::enframe(bwnet$colors, name = "gene", value = "module") %>%
-  dplyr::mutate(module = paste0("ME", module))
-
-gene_module_key_ME167 <- gene_module_key %>%
-  dplyr::filter(module == "ME167")
-
-make_module_heatmap <- function(module_name, expression_mat = normalized_counts, # These next few lines specify the function name (make_module_heatmap) and any arguments the function takes
-                                metadata_df = coldata, gene_module_key_df = gene_module_key, # as well as any default values of those arguments. For example, it requires a module_name, as well as an expression matrix
-                                module_eigengenes_df = module_eigengenes) { # There's no default module name, but the default expression matrix name is normalized_counts, etc.
-  
-  module_eigengene <- module_eigengenes_df %>% # This block of code creates a little table with the fish ID and the module eigengene value associated with each fish
-    dplyr::select(all_of(module_name)) %>%
-    tibble::rownames_to_column("fishID")
-  
-  col_annot_df <- metadata_df %>% # This block of code adds the treatment information (i.e., Dec or Feb) to that table
-    dplyr::select(Treatment, fishID) %>%
-    dplyr::inner_join(module_eigengene, by = "fishID") %>%
-    dplyr::arrange(Treatment, fishID) %>%
-    tibble::column_to_rownames("fishID")
-  
-  col_annot <- ComplexHeatmap::HeatmapAnnotation( # This block of code creates a small barplot below the actual heatmap, which will contain the eigengene (i.e., summary) expression values for each sample. The samples will be blocked and colored by treatment.
-    treatment = col_annot_df$Treatment,
-    module_eigengene = ComplexHeatmap::anno_barplot(dplyr::select(col_annot_df, module_name)),
-    col = list(Treatment = c("Control" = "blue2", "Single" = "coral2", "Multiple" = "green"))
+#plot
+ggplot(pca_df, aes(x = PC1, y = PC2, color = Treatment, shape = Treatment)) +
+  geom_point(size = 5) +
+  ggforce::geom_mark_ellipse(aes(color = Treatment)) +
+  labs(title = NULL,
+       x = paste0("PC1 (", round(summary(pca_data)$importance[2, 1] * 100, 1), "% variance)"),
+       y = paste0("PC2 (", round(summary(pca_data)$importance[2, 2] * 100, 1), "% variance)")) +
+  theme_classic() +
+  scale_color_manual(values = c("grey", "blue", "red")) + 
+  theme(legend.background = element_rect(fill = "white", color = "black")) +
+  coord_cartesian(
+    xlim = c(min(pca_df$PC1) - x_buffer, max(pca_df$PC1) + x_buffer),
+    ylim = c(min(pca_df$PC2) - y_buffer, max(pca_df$PC2) + y_buffer),
+    expand = TRUE,
+    clip = "off"
   )
-  
-  module_genes <- gene_module_key_df %>% # This creates an object called module_genes, which selects all of the gene names in our module of interest
-    dplyr::filter(module == module_name) %>%
-    dplyr::pull(gene)
-  
-  mod_mat <- expression_mat %>% # This grabs the expression values for each gene in our module
-    t() %>%
-    as.data.frame() %>%
-    dplyr::filter(rownames(.) %in% module_genes) %>%
-    dplyr::select(rownames(col_annot_df)) %>%
-    as.matrix()
-  
-  mod_mat <- mod_mat %>% # This normalizes the expression values
-    t() %>%
-    scale() %>%
-    t()
-  
-  color_func <- circlize::colorRamp2( # And this creates our colorization scale
-    c(-2, 0, 2),
-    c("blue2", "white", "coral2")
-  )
-  
-  heatmap <- ComplexHeatmap::Heatmap(mod_mat, # Finally, this plots the expression values of each gene in each sample on a heatmap
-                                     name = module_name,
-                                     col = color_func,
-                                     bottom_annotation = col_annot,
-                                     cluster_columns = F,
-                                     show_row_names = F,
-                                     show_column_names = F)
-  
-  return(heatmap) # And the function will output the heatmap
-  
-}
 
-module_167_heatmap <- make_module_heatmap(module_name="ME167")
+
