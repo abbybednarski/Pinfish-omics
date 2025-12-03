@@ -2,7 +2,7 @@
 This repository contains scripts used to analyzing transcriptomic, metabolomic, and DNA methylation data of the pinfish (_Lagodon rhomboides_).
 
 ## Transcriptomics
-
+Tag-seq at UT Austin was performed with extracted RNA from muscle tissue samples. 
 
 
 ## Metabolomics
