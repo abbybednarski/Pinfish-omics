@@ -1,5 +1,5 @@
 # Pipeline for analyzing Tag-Seq data from UT Austin GSAF 
-### heavily based on https://github.com/z0on/tag-based_RNAseq
+### Based on https://github.com/z0on/tag-based_RNAseq
 1. Begin by downloading data from BaseSpace and verify downloaded files with md5sum checks
     - You can do this by running md5sum *.gz and then comparing the numbers of your downloaded files and the files still on BaseSpace 
 2. Concatenate sequence files for the same sample run on different lanes
@@ -33,5 +33,5 @@ cat ${sample}*.fastq.gz > ${sample}.fq.gz <br/>
       grep ">" Transcriptome-Sequences-Trimmed-Names.fa > Transcript_IDs.txt <br/>
       cat Transcript_IDs.txt | sed 's/>\(TRINITY_DN[0-9]*_c[0-9]*_g[0-9]*\)\(_i[0-9]*\)/\1\2\t\1/' > transcriptome_seq2iso.tab <br/>
     - Following the samcount.sh script in this repository, generate count data per sample, making sure the *.pl and transcriptome_seq2iso.tab files are in your working directory.
-    - You now have count data for each sample!
-10. Run differential expression analysis with DESeq2 in R
+10. Run differential expression analysis with DESeq2 in RStudio following the DESeq2.R script
+11. Run GO analysis in RStudio following the GO_MWU.R script
