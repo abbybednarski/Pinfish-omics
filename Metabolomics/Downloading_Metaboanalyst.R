@@ -130,8 +130,8 @@
 #BiocManager::install("spls")
 #library(spls)
 
-#install using following code: followed chatgpt a lot because have to specifically change paths for where gfortran is on YOUR laptop (sorry that is not helpful
-#need specific library links for where gfortran is on your labtop so had to use comman line to find the paths, make R use those specific paths, then download
+#install on R using following code (have to specifically change paths for where gfortran is on YOUR laptop (sorry that is not helpful)):
+ ##need specific library links for where gfortran is on your labtop so had to use command line to find the paths, make R use those specific paths, then download
 #Sys.setenv(LDFLAGS="-L/usr/local/gfortran/lib -L/usr/local/Cellar/gcc/14.2.0_1/lib/gcc/14")
 #Sys.setenv(PKG_LIBS="-lgfortran -lquadmath")
 #pkgbuild::check_build_tools(debug = TRUE)
@@ -169,6 +169,6 @@ library(rsm)
 library(globaltest)
 library(GlobalAncova)
 library(qvalue)
-
+#and finally!
 library(MetaboAnalystR)
 
