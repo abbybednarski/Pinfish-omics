@@ -1,7 +1,7 @@
-#set to wherever coldata and allcounts are to run properly
+#set to wherever coldata.txt (sample info) and allcounts.txt (gene count data) are to run properly
 setwd("~/Desktop/Tagseq")
 
-#load in packages, maybe have to install with BiocManager in the future
+#load in packages
 #install.packages("tidyverse")
 library(tidyverse)
 library(magrittr)
@@ -21,26 +21,21 @@ countdata <- as.matrix(read.table("allcounts.txt", sep = "\t", row.names = 1, he
 #remove the X.1 column that has no information in it, may not need this line for other datasets
 countdata <- countdata[, colnames(countdata) != "X.1"]
 
-#check for outliers on PCA, single HW tower 3
-
-# Remove outlier samples (detected on heatmap of sample-to-sample distance matrices), specific for Katie
-#countdata <- countdata[, colnames(countdata) != "C.T5.10.counts"]
 # Remove samples taken at incorrect temp (from tower 2)
 countdata <- countdata[, colnames(countdata) != "M.T2.09.M.counts"]
 countdata <- countdata[, colnames(countdata) != "M.T2.16.M.counts"]
 
 # Read in sample metadata
 coldata <- read.table("coldata.txt")
-#make sure sampling temp is a factor, not going to be changed bw treatments/over the dataset
+#make sure sampling temp and tower are read in as a factor
 coldata$SamplingTemp <- as.factor(coldata$SamplingTemp)
-#make sure the towers are read as factors instead of numerical data
 coldata$Tower <- as.factor(coldata$Tower)
 
-# Remove outlier samples (if any) and samples from tower 2
+# Remove samples from tower 2
 coldata <- coldata[rownames(coldata) != "M.T2.09.M.counts",]
 coldata <- coldata[rownames(coldata) != "M.T2.16.M.counts",]
 
-#need for DESeq, should say true, seeing if the column names match countdata and colnames, check link for more explanation
+#need for DESeq, should say true, seeing if the column names match countdata and colnames
 all(rownames(coldata) == colnames(countdata))
 
 #make big matrix to be able to check for outliers, design=~ Treatment to compare TREATMENT rather than anything else, name the titles of parts of matrix, factor in weight, front/back of tower
@@ -56,7 +51,7 @@ dds_noT2 <- DESeq(dds_noT2)
 #can only look at pairwise comparison so comparing only 2 different treatments to each other, not 3
 #for the following code, this structure is followed:
   #contrast = c("Treatment", "InterestGroup", "ReferenceGroup")
-  #this means control is the ref for SvC and MvC but multiple is the ref for SvM
+  #this means control is the ref for SvC and MvC but multiple is the ref for SvM *******
 
 #compare multiple to control, alpha should match p value
 res_control_multiple <- results(dds_noT2, alpha = 0.05, contrast = c("Treatment", "Multiple", "Control"))
@@ -197,7 +192,4 @@ ggplot(pca_df, aes(x = PC1, y = PC2, color = Treatment, shape = Treatment)) +
     xlim = c(min(pca_df$PC1) - x_buffer, max(pca_df$PC1) + x_buffer),
     ylim = c(min(pca_df$PC2) - y_buffer, max(pca_df$PC2) + y_buffer),
     expand = TRUE,
-    clip = "off"
-  )
-
-
+    clip = "off")
