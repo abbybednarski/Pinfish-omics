@@ -1,14 +1,14 @@
 # Pinfish-omics
-This repository contains scripts used to analyzing transcriptomic, metabolomic, and DNA methylation data of the pinfish (_Lagodon rhomboides_).
+This repository contains all of the scripts used to analyze transcriptomic, metabolomic, and DNA methylation data of the pinfish (_Lagodon rhomboides_).
 
 ## Transcriptomics
-Tag-seq at UT Austin was performed with extracted RNA from muscle tissue samples. 
-
+TagSeq at UT Austin was performed with extracted RNA from muscle tissue samples. See README within the Transcriptomics folder for more info.
 
 ## Metabolomics
-Untargeted metabolomics by Creative Proteomics was performed on flash frozen muscle tissue samples. returned an excel file for positive and negative ion modes. These files were analyzed separately. These files also already contained annotated metabolites. We then performed statistical analysis to find significantly differentially expression metabolites. 
-
-Metaboanalyst R package was used for analysis. Downloading_Metaboanalyst.R script was used to download this package. Many package dependencies were necessary. Then, we performed statistical analysis on negative ion mode and positive ion mode annotated metabolites using neg_stat_analysis.R and pos_stat_analysis.R scripts. Functional and enrichment analysis was performed manually. 
+Untargeted metabolomics by Creative Proteomics was performed on flash frozen muscle tissue samples. Creative Proteomics returned one Excel file for positive and negative ion modes, respectively, with annotated metabolites. We then performed statistical analysis to find differentially expressed metabolites. See the README within the Metabolomics folder for more info.
 
 ## DNA methylation
-Whole Genome Bisulfite Sequencing (WGBS) was performed on extracted DNA from muscle tissue samples. We followed to CpG_Me pipeline for pre-processing analysis (citation). We then used methylKit package in R for downstream analysis.
+Whole Genome Bisulfite Sequencing (WGBS) by Novogene was performed on extracted DNA from flash frozen muscle tissue samples. We followed to CpG_Me pipeline for pre-processing (https://github.com/ben-laufer/CpG_Me), and the methylKit package in R for downstream analysis.
+
+## Buoy data
+To determine ecological significance of temperatures, data from the National Data Buoy Center was downloaded and analyzed. A guide was provided on how to download these data (GuidetoNDCBdata.docx) and the script that was used to determine summary statistics is also included (buoy_temp_data_Chp1.R).
