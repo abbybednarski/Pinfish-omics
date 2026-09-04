@@ -11,3 +11,4 @@
         - DMR_MvS.R and MvS_methylation_analysis.sh
    - Once you have completed differential methylation analysis, files can be transferred to your local computer and analyzed further
    - The R scripts also contain code for manhattan plots, violin plots, ECDFs, methylation summary statistics, and more.
+3. The overlapping_DMCs.R script provides code to find overlapping DMCs, unique DMCs, annotate DMCs, match DMGs to DEGs, and run GO analysis on DMGs.
