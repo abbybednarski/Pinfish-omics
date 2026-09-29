@@ -314,6 +314,27 @@ MvS_anno <- annotate_DMC(MvS_gr, MvS_nonoverlap)
 overlapping_CMCS_anno <- annotate_DMC(overlapping_CMCS_gr, overlapping_CMCS)
 overlapping_CSMS_anno <- annotate_DMC(overlapping_CSMS_gr, overlapping_CSMS)
 
+#make gene column and assign gene ID for all sets
+gene_hits <- findOverlaps(CvS_gr, genes)
+CvS_anno$gene <- NA
+CvS_anno$gene[queryHits(gene_hits)] <- genes$ID[subjectHits(gene_hits)]
+
+gene_hits <- findOverlaps(CvM_gr, genes)
+CvM_anno$gene <- NA
+CvM_anno$gene[queryHits(gene_hits)] <- genes$ID[subjectHits(gene_hits)]
+
+gene_hits <- findOverlaps(MvS_gr, genes)
+MvS_anno$gene <- NA
+MvS_anno$gene[queryHits(gene_hits)] <- genes$ID[subjectHits(gene_hits)]
+
+gene_hits <- findOverlaps(overlapping_CMCS_gr, genes)
+overlapping_CMCS_anno$gene <- NA
+overlapping_CMCS_anno$gene[queryHits(gene_hits)] <- genes$ID[subjectHits(gene_hits)]
+
+gene_hits <- findOverlaps(overlapping_CSMS_gr, genes)
+overlapping_CSMS_anno$gene <- NA
+overlapping_CSMS_anno$gene[queryHits(gene_hits)] <- genes$ID[subjectHits(gene_hits)]
+
 library(dplyr)
 library(tidyr)
 
